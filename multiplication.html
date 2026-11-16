@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تعلّم جدول الضرب</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap">
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#1b2733;--muted:#5b6b7a;--accent:#2563eb;--acc2:#e8f0ff;--ok:#16a34a;--bad:#dc2626;--line:#d9e2ec;--hl:#fde68a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1620;--card:#18222e;--text:#e8eef4;--muted:#9fb0c0;--accent:#5b9bff;--acc2:#1d2b44;--ok:#4ade80;--bad:#f87171;--line:#2b3a48;--hl:#5b4a10;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1620;--card:#18222e;--text:#e8eef4;--muted:#9fb0c0;--accent:#5b9bff;--acc2:#1d2b44;--ok:#4ade80;--bad:#f87171;--line:#2b3a48;--hl:#5b4a10}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.7}
+main{max-width:640px;margin:auto;padding:14px}
+h1{text-align:center;font-size:1.6rem;margin:6px 0 12px;color:var(--accent)}
+.tabs{display:flex;gap:6px;background:var(--card);padding:5px;border-radius:14px;border:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.tabs button{flex:1;font:inherit;font-weight:700;border:0;background:none;color:var(--muted);padding:9px 4px;border-radius:10px;cursor:pointer}
+.tabs button.on{background:var(--accent);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.chip{font:inherit;font-weight:700;min-width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;direction:ltr}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.rows{display:grid;grid-template-columns:1fr 1fr;gap:6px;direction:ltr}
+.row{font:inherit;font-size:1.1rem;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;text-align:center}
+.row.on{background:var(--acc2);border-color:var(--accent);font-weight:700}
+.tip{background:var(--acc2);border-radius:10px;padding:10px 12px;margin-top:10px}
+.dots{display:grid;gap:3px;justify-content:center;margin:10px auto;direction:ltr}
+.dot{width:100%;aspect-ratio:1;border-radius:50%;background:var(--accent);opacity:.85}
+.dot.alt{background:var(--ok)}
+.big{direction:ltr;text-align:center;font-size:2.2rem;font-weight:800;margin:8px 0}
+.gridwrap{overflow-x:auto;direction:ltr}
+table{border-collapse:collapse;margin:auto;font-size:.85rem}
+td,th{width:34px;height:34px;text-align:center;border:1px solid var(--line);padding:0;cursor:pointer}
+th{background:var(--acc2);color:var(--accent)}
+td.r,th.r{background:var(--hl)}
+td.x{background:var(--accent);color:#fff;font-weight:700}
+input[type=number]{font:inherit;font-size:1.8rem;width:140px;text-align:center;border:2px solid var(--line);border-radius:12px;padding:8px;background:var(--bg);color:var(--text);direction:ltr}
+.go{font:inherit;font-weight:700;background:var(--accent);color:#fff;border:0;border-radius:12px;padding:11px 26px;cursor:pointer;margin:6px 4px}
+.center{text-align:center}
+.fb{min-height:1.8em;font-weight:700}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.stat{display:flex;justify-content:space-around;color:var(--muted);font-size:.95rem}
+.wrong{direction:ltr;text-align:center;color:var(--bad)}
+</style>
+</head>
+<body>
+<main>
+<h1>✖️ تعلّم جدول الضرب</h1>
+<div class="tabs">
+<button id="t0" class="on" onclick="tab(0)">📖 تعلّم</button>
+<button id="t1" onclick="tab(1)">🔢 الجدول</button>
+<button id="t2" onclick="tab(2)">🎯 اختبار</button>
+</div>
+
+<section id="p0" class="card">
+<div class="center"><b>اختر الجدول:</b></div>
+<div class="chips" id="nums"></div>
+<div class="big" id="title"></div>
+<div class="rows" id="rows"></div>
+<div class="center"><small style="color:var(--muted)">اضغط على أي سطر لتراه بالنقاط</small></div>
+<div class="dots" id="dots"></div>
+<div class="tip" id="tip"></div>
+</section>
+
+<section id="p1" class="card" hidden>
+<div class="big" id="gres">اضغط على أي خانة</div>
+<div class="gridwrap"><table id="grid"></table></div>
+</section>
+
+<section id="p2" hidden>
+<div class="card"><div class="center"><b>اختر الجداول التي تريد التدرب عليها:</b></div>
+<div class="chips" id="qnums"></div>
+<div class="center"><button class="go" onclick="start()">ابدأ الاختبار (10 أسئلة)</button></div></div>
+<div class="card" id="qbox" hidden>
+<div class="stat"><span id="qn"></span><span id="sc"></span><span id="st"></span></div>
+<div class="bar"><i id="pb"></i></div>
+<div class="big" id="qq"></div>
+<div class="center"><input type="number" id="ans" inputmode="numeric" onkeydown="if(event.key==='Enter')check()"></div>
+<div class="center"><button class="go" id="ok" onclick="check()">تحقق</button></div>
+<div class="center fb" id="fb"></div>
+</div>
+<div class="card center" id="res" hidden></div>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const TIPS={1:"أي عدد × 1 يساوي نفسه.",2:"الضرب في 2 هو التضعيف: 2×7 = 7+7 = 14.",3:"الضرب في 3: ضعّف العدد ثم أضف العدد مرة أخرى. 3×6 = 12+6 = 18.",4:"الضرب في 4: ضعّف العدد مرتين. 4×7 → 14 → 28.",5:"نواتج جدول 5 تنتهي دائماً بـ 0 أو 5. وللأعداد الزوجية: نصف العدد ثم ضع صفراً (5×8 → 4 → 40).",6:"6×n = 5×n + n. مثلاً 6×7 = 35 + 7 = 42.",7:"احفظ الصعب: 7×6=42 ، 7×7=49 ، 7×8=56 (5,6,7,8 → 56 = 7×8).",8:"الضرب في 8: ضعّف العدد ثلاث مرات. 8×6 → 12 → 24 → 48.",9:"9×n = 10×n − n. مثلاً 9×7 = 70 − 7 = 63. ومجموع رقمَي الناتج يساوي 9 دائماً (6+3).",10:"أضف صفراً على يمين العدد: 10×7 = 70.",11:"حتى 11×9 كرّر الرقم: 11×4 = 44. وبعدها 11×12 = 132 ، 11×11 = 121.",12:"12×n = 10×n + 2×n. مثلاً 12×7 = 70 + 14 = 84."};
+let cur=2;
+function chips(el,fn,multi){const e=$(el);for(let i=1;i<=12;i++){const b=document.createElement("button");b.className="chip";b.textContent=i;b.dataset.n=i;b.onclick=()=>fn(i,b);e.appendChild(b)}}
+function tab(i){for(let k=0;k<3;k++){$("p"+k).hidden=k!==i;$("t"+k).className=k===i?"on":""}}
+function learn(n){cur=n;document.querySelectorAll("#nums .chip").forEach(b=>b.classList.toggle("on",+b.dataset.n===n));
+$("title").textContent="جدول "+n;
+$("rows").innerHTML="";for(let i=1;i<=12;i++){const b=document.createElement("button");b.className="row";b.textContent=n+" × "+i+" = "+n*i;b.onclick=()=>show(i,b);$("rows").appendChild(b)}
+$("tip").innerHTML="💡 <b>حيلة:</b> "+TIPS[n];show(1,$("rows").children[0])}
+function show(i,b){document.querySelectorAll(".row").forEach(r=>r.classList.remove("on"));b.classList.add("on");
+const d=$("dots");d.style.gridTemplateColumns="repeat("+i+",1fr)";d.style.width=Math.min(i*28,300)+"px";d.innerHTML="";
+for(let r=0;r<cur;r++)for(let c=0;c<i;c++){const s=document.createElement("div");s.className="dot"+(r%2?" alt":"");d.appendChild(s)}}
+function buildGrid(){let h="<tr><th>×</th>";for(let j=1;j<=12;j++)h+=`<th data-c="${j}">${j}</th>`;h+="</tr>";
+for(let i=1;i<=12;i++){h+=`<tr><th data-r="${i}">${i}</th>`;for(let j=1;j<=12;j++)h+=`<td data-r="${i}" data-c="${j}">${i*j}</td>`;h+="</tr>"}
+$("grid").innerHTML=h;
+$("grid").onclick=e=>{const t=e.target.closest("td");if(!t)return;const r=+t.dataset.r,c=+t.dataset.c;
+document.querySelectorAll("#grid .r,#grid .x").forEach(x=>x.classList.remove("r","x"));
+document.querySelectorAll("#grid td").forEach(x=>{if(+x.dataset.r===r&&+x.dataset.c<=c||+x.dataset.c===c&&+x.dataset.r<=r)x.classList.add("r")});
+t.classList.remove("r");t.classList.add("x");$("gres").textContent=r+" × "+c+" = "+r*c}}
+let sel=new Set([2,3,4,5]),Q=[],qi=0,score=0,streak=0,wrong=[];
+function togg(n,b){sel.has(n)?sel.delete(n):sel.add(n);b.classList.toggle("on",sel.has(n))}
+function start(){if(!sel.size){alert("اختر جدولاً واحداً على الأقل");return}
+const pool=[...sel];Q=[];for(let k=0;k<10;k++){Q.push([pool[Math.floor(Math.random()*pool.length)],1+Math.floor(Math.random()*12)])}
+qi=0;score=0;streak=0;wrong=[];$("qbox").hidden=false;$("res").hidden=true;next()}
+function next(){if(qi>=10)return finish();const[a,b]=Q[qi];$("qq").textContent=a+" × "+b+" = ?";$("ans").value="";$("fb").textContent="";$("ok").textContent="تحقق";$("ok").dataset.s="c";
+$("qn").textContent="السؤال "+(qi+1)+"/10";$("sc").textContent="⭐ "+score;$("st").textContent="🔥 "+streak;$("pb").style.width=qi*10+"%";$("ans").focus()}
+function check(){const ok=$("ok");if(ok.dataset.s==="n"){qi++;return next()}
+const v=$("ans").value;if(v==="")return;const[a,b]=Q[qi];
+if(+v===a*b){score++;streak++;$("fb").style.color="var(--ok)";$("fb").textContent="✅ أحسنت!"}
+else{streak=0;wrong.push(a+" × "+b+" = "+a*b);$("fb").style.color="var(--bad)";$("fb").textContent="❌ الصحيح: "+a*b}
+$("sc").textContent="⭐ "+score;$("st").textContent="🔥 "+streak;ok.textContent=qi===9?"النتيجة":"التالي";ok.dataset.s="n"}
+function finish(){$("qbox").hidden=true;const r=$("res");r.hidden=false;
+const m=score===10?"🏆 ممتاز! إجابات كاملة":score>=7?"👏 جيد جداً":score>=4?"👍 جيد، استمر في التدريب":"💪 راجع الجدول ثم أعد المحاولة";
+r.innerHTML=`<div class="big">${score} / 10</div><div><b>${m}</b></div>`+(wrong.length?`<p>راجع هذه العمليات:</p><div class="wrong">${[...new Set(wrong)].join("<br>")}</div>`:"")+`<button class="go" onclick="start()">اختبار جديد</button>`}
+chips("nums",n=>learn(n));chips("qnums",togg);
+document.querySelectorAll("#qnums .chip").forEach(b=>b.classList.toggle("on",sel.has(+b.dataset.n)));
+buildGrid();learn(2);
+</script>
+</body>
+</html>
